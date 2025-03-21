@@ -1,4 +1,3 @@
-import * as ClerkInternal from '@clerk/backend/internal';
 import { apiUrlFromPublishableKey } from '@clerk/shared/apiUrlFromPublishableKey';
 import { isTruthy } from '@clerk/shared/underscore';
 
@@ -18,5 +17,26 @@ export const TELEMETRY_DISABLED = isTruthy(
 );
 export const TELEMETRY_DEBUG = isTruthy(process.env.CLERK_TELEMETRY_DEBUG);
 
-export const Cookies = ClerkInternal.constants.Cookies;
-export const Headers = ClerkInternal.constants.Headers;
+// Define constants directly to avoid internal imports
+export const Headers = {
+	Location: 'location',
+	Authorization: 'authorization',
+	ForwardedProto: 'x-forwarded-proto',
+	ForwardedHost: 'x-forwarded-host',
+	ForwardedPort: 'x-forwarded-port',
+	Forwarded: 'forwarded',
+	Host: 'host',
+	Origin: 'origin',
+	Referer: 'referer',
+	SecFetchSite: 'sec-fetch-site',
+	SecFetchMode: 'sec-fetch-mode',
+	SecFetchDest: 'sec-fetch-dest',
+	UserAgent: 'user-agent',
+	XForwardedHost: 'x-forwarded-host',
+};
+
+export const Cookies = {
+	Session: '__session',
+	ClientUat: '__client_uat',
+	ProxySession: '__proxy_session',
+};

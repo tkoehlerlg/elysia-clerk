@@ -1,8 +1,14 @@
 import type { ClerkOptions } from '@clerk/backend';
-import * as ClerkInternal from '@clerk/backend/internal';
 import { Elysia } from 'elysia';
 import { clerkClient } from './clerkClient';
 import * as constants from './constants';
+
+export enum AuthStatus {
+	SignedOut = 'signed_out',
+	SignedIn = 'signed_in',
+	Handshake = 'handshake',
+	Unknown = 'unknown',
+}
 
 export type ElysiaClerkOptions = ClerkOptions;
 
@@ -38,7 +44,7 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 				};
 			}
 
-			if (requestState.status === ClerkInternal.AuthStatus.Handshake) {
+			if (requestState.status === AuthStatus.Handshake) {
 				throw new Error('Clerk: handshake status without redirect');
 			}
 

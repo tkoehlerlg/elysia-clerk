@@ -1,4 +1,4 @@
-import { constants } from '@clerk/backend/internal';
+import * as ClerkInternal from '@clerk/backend/internal';
 import { apiUrlFromPublishableKey } from '@clerk/shared/apiUrlFromPublishableKey';
 import { isTruthy } from '@clerk/shared/underscore';
 
@@ -18,4 +18,5 @@ export const TELEMETRY_DISABLED = isTruthy(
 );
 export const TELEMETRY_DEBUG = isTruthy(process.env.CLERK_TELEMETRY_DEBUG);
 
-export const { Cookies, Headers } = constants;
+export const Cookies = ClerkInternal.constants.Cookies;
+export const Headers = ClerkInternal.constants.Headers;

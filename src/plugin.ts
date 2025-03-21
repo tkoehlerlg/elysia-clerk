@@ -1,5 +1,5 @@
 import type { ClerkOptions } from '@clerk/backend';
-import { AuthStatus } from '@clerk/backend/internal';
+import * as ClerkInternal from '@clerk/backend/internal';
 import { Elysia } from 'elysia';
 import { clerkClient } from './clerkClient';
 import * as constants from './constants';
@@ -38,7 +38,7 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 				};
 			}
 
-			if (requestState.status === AuthStatus.Handshake) {
+			if (requestState.status === ClerkInternal.AuthStatus.Handshake) {
 				throw new Error('Clerk: handshake status without redirect');
 			}
 

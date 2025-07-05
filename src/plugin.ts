@@ -2,17 +2,27 @@ import type {
 	AuthenticateRequestOptions,
 	SignedInAuthObject,
 	SignedOutAuthObject,
-	TokenType,
 } from '@clerk/backend/internal';
+import { TokenType } from '@clerk/backend/internal';
 import type { PendingSessionOptions } from '@clerk/types';
 import { Elysia } from 'elysia';
 import { clerkClient } from './clerkClient';
 import * as constants from './constants';
 
+export type StringOrFunction = string | (() => string);
+
+function resolveStringOrFunction(value: StringOrFunction): string {
+	if (typeof value === 'function') return value();
+	return value;
+}
+
 export type ElysiaClerkOptions = Omit<
 	AuthenticateRequestOptions,
-	'acceptsToken'
->;
+	'acceptsToken' | 'secretKey' | 'publishableKey'
+> & {
+	secretKey?: StringOrFunction;
+	publishableKey?: StringOrFunction;
+};
 
 const HandshakeStatus = 'handshake';
 const LocationHeader = 'location';
@@ -20,45 +30,46 @@ const LocationHeader = 'location';
 type SessionAuthObject = SignedInAuthObject | SignedOutAuthObject;
 
 export function clerkPlugin(options?: ElysiaClerkOptions) {
-	const secretKey = options?.secretKey ?? constants.SECRET_KEY;
-	const publishableKey = options?.publishableKey ?? constants.PUBLISHABLE_KEY;
+	const secretKey = resolveStringOrFunction(
+		options?.secretKey ?? constants.SECRET_KEY,
+	);
+	const publishableKey = resolveStringOrFunction(
+		options?.publishableKey ?? constants.PUBLISHABLE_KEY,
+	);
 
 	return new Elysia({
 		name: 'elysia-clerk',
 		seed: options,
-	})
-		.decorate('clerk', clerkClient)
-		.resolve(async ({ request, set }) => {
-			const requestState = await clerkClient.authenticateRequest(request, {
-				...options,
-				secretKey,
-				publishableKey,
-				acceptsToken: TokenType.SessionToken,
-			});
+	}).resolve({ as: 'scoped' }, async ({ request, set }) => {
+		const requestState = await clerkClient.authenticateRequest(request, {
+			...options,
+			secretKey,
+			publishableKey,
+			acceptsToken: TokenType.SessionToken,
+		});
 
-			const auth = (options?: PendingSessionOptions) =>
-				requestState.toAuth(options) as SessionAuthObject;
+		const auth = (options?: PendingSessionOptions) =>
+			requestState.toAuth(options) as SessionAuthObject;
 
-			requestState.headers.forEach((value, key) => {
-				set.headers[key] = value;
-			});
+		requestState.headers.forEach((value, key) => {
+			set.headers[key] = value;
+		});
 
-			const locationHeader = requestState.headers.get(LocationHeader);
-			if (locationHeader) {
-				// Trigger a handshake redirect
-				set.status = 307;
-				return {
-					auth,
-				};
-			}
-
-			if (requestState.status === HandshakeStatus) {
-				throw new Error('Clerk: handshake status without redirect');
-			}
-
+		const locationHeader = requestState.headers.get(LocationHeader);
+		if (locationHeader) {
+			// Trigger a handshake redirect
+			set.status = 307;
 			return {
 				auth,
 			};
-		})
-		.as('plugin');
+		}
+
+		if (requestState.status === HandshakeStatus) {
+			throw new Error('Clerk: handshake status without redirect');
+		}
+
+		return {
+			auth,
+		};
+	});
 }

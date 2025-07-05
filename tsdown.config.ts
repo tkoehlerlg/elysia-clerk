@@ -1,16 +1,16 @@
-import { defineConfig } from 'tsdown'
-import pkg from './package.json'
+import { defineConfig } from 'tsdown';
+import pkg from './package.json';
 
 export default defineConfig(() => {
-  return {
-    entry: ['src/index.ts'],
-    format: ['cjs', 'esm'],
-    clean: true,
-    minify: false,
-    dts: true,
-    define: {
-      PACKAGE_NAME: `"${pkg.name}"`,
-      PACKAGE_VERSION: `"${pkg.version}"`,
-    },
-  }
-})
+	return {
+		entry: ['src/index.ts'],
+		format: ['cjs', 'esm'],
+		clean: true,
+		minify: false,
+		dts: true,
+		define: {
+			PACKAGE_NAME: `"${pkg.name}"`,
+			PACKAGE_VERSION: `"${pkg.version}"`,
+		},
+	};
+});

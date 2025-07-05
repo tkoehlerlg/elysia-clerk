@@ -30,17 +30,17 @@ const LocationHeader = 'location';
 type SessionAuthObject = SignedInAuthObject | SignedOutAuthObject;
 
 export function clerkPlugin(options?: ElysiaClerkOptions) {
-	const secretKey = resolveStringOrFunction(
-		options?.secretKey ?? constants.SECRET_KEY,
-	);
-	const publishableKey = resolveStringOrFunction(
-		options?.publishableKey ?? constants.PUBLISHABLE_KEY,
-	);
-
 	return new Elysia({
 		name: 'elysia-clerk',
 		seed: options,
 	}).resolve({ as: 'scoped' }, async ({ request, set }) => {
+		const secretKey = resolveStringOrFunction(
+			options?.secretKey ?? constants.SECRET_KEY,
+		);
+		const publishableKey = resolveStringOrFunction(
+			options?.publishableKey ?? constants.PUBLISHABLE_KEY,
+		);
+
 		const requestState = await clerkClient.authenticateRequest(request, {
 			...options,
 			secretKey,

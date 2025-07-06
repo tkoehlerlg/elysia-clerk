@@ -48,12 +48,17 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 			);
 			verboseLog(`secretKey: ${secretKey}, publishableKey: ${publishableKey}`);
 
-			const requestState = await clerkClient.authenticateRequest(request, {
-				...options,
-				secretKey,
-				publishableKey,
-				acceptsToken: TokenType.SessionToken,
-			});
+			const clonedRequest = { ...request.clone(), headers: request.headers };
+
+			const requestState = await clerkClient.authenticateRequest(
+				clonedRequest,
+				{
+					...options,
+					secretKey,
+					publishableKey,
+					acceptsToken: TokenType.SessionToken,
+				},
+			);
 
 			const auth = (options?: PendingSessionOptions) =>
 				requestState.toAuth(options) as SessionAuthObject;

@@ -22,6 +22,7 @@ export type ElysiaClerkOptions = Omit<
 > & {
 	secretKey?: StringOrFunction;
 	publishableKey?: StringOrFunction;
+	verbose?: boolean;
 };
 
 const HandshakeStatus = 'handshake';
@@ -40,6 +41,8 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 		const publishableKey = resolveStringOrFunction(
 			options?.publishableKey ?? constants.PUBLISHABLE_KEY,
 		);
+		if (options?.verbose)
+			console.log('[elysia-clerk] secretKey:', secretKey, 'publishableKey:', publishableKey);
 
 		const requestState = await clerkClient.authenticateRequest(request, {
 			...options,

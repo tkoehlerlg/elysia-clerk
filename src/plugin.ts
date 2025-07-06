@@ -36,20 +36,17 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 		seed: options,
 	})
 		.resolve(async ({ request, set }) => {
-			console.log('[elysia-clerk] options:', options);
+			const verboseLog = (...message: unknown[]) => {
+				if (options?.verbose) console.log('[elysia-clerk]', ...message);
+			};
+			verboseLog('options:', options);
 			const secretKey = resolveStringOrFunction(
 				options?.secretKey ?? constants.SECRET_KEY,
 			);
 			const publishableKey = resolveStringOrFunction(
 				options?.publishableKey ?? constants.PUBLISHABLE_KEY,
 			);
-			if (options?.verbose)
-				console.log(
-					'[elysia-clerk] secretKey:',
-					secretKey,
-					'publishableKey:',
-					publishableKey,
-				);
+			verboseLog(`secretKey: ${secretKey}, publishableKey: ${publishableKey}`);
 
 			const requestState = await clerkClient.authenticateRequest(request, {
 				...options,
@@ -78,9 +75,7 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 				throw new Error('Clerk: handshake status without redirect');
 			}
 
-			if (options?.verbose) {
-				console.log('[elysia-clerk] requestState:', requestState);
-			}
+			verboseLog(`requestState: ${requestState}`);
 
 			return {
 				auth,

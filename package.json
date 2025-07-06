@@ -1,6 +1,6 @@
 {
 	"name": "@tkoehlerlg/elysia-clerk",
-	"version": "0.11.9",
+	"version": "0.11.10",
 	"description": "Unofficial Clerk plugin for Elysia.",
 	"author": "Robert Soriano <sorianorobertc@gmail.com>, Torben Koehler <mail@torben.codes>",
 	"license": "MIT",

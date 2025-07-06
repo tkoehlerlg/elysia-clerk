@@ -3,7 +3,6 @@ import type {
 	SignedInAuthObject,
 	SignedOutAuthObject,
 } from '@clerk/backend/internal';
-import { TokenType } from '@clerk/backend/internal';
 import type { PendingSessionOptions } from '@clerk/types';
 import { Elysia } from 'elysia';
 import { clerkClient } from './clerkClient';
@@ -23,7 +22,7 @@ export type ElysiaClerkOptions = Omit<
 > & {
 	secretKey?: StringOrFunction;
 	publishableKey?: StringOrFunction;
-	verbose?: boolean;
+	debug?: boolean;
 };
 
 const HandshakeStatus = 'handshake';
@@ -36,20 +35,21 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 		name: 'elysia-clerk',
 		seed: options,
 	})
+		.decorate('clerk', clerkClient)
 		.resolve(async ({ request, set }) => {
-			const verboseLog = (...message: unknown[]) => {
-				if (options?.verbose) console.log('[elysia-clerk]', ...message);
+			const debugLog = (...message: unknown[]) => {
+				if (options?.debug) console.log('[elysia-clerk]', ...message);
 			};
-			verboseLog('options:', options);
+			debugLog('options:', options);
 			const secretKey = resolveStringOrFunction(
 				options?.secretKey ?? constants.SECRET_KEY,
 			);
 			const publishableKey = resolveStringOrFunction(
 				options?.publishableKey ?? constants.PUBLISHABLE_KEY,
 			);
-			verboseLog(`secretKey: ${secretKey}, publishableKey: ${publishableKey}`);
+			debugLog(`secretKey: ${secretKey}, publishableKey: ${publishableKey}`);
 
-			const clonedRequest = await cloneRequest(request);
+			const clonedRequest = cloneRequest(request);
 
 			const requestState = await clerkClient.authenticateRequest(
 				clonedRequest,
@@ -57,7 +57,6 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 					...options,
 					secretKey,
 					publishableKey,
-					acceptsToken: TokenType.SessionToken,
 				},
 			);
 
@@ -81,7 +80,7 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 				throw new Error('Clerk: handshake status without redirect');
 			}
 
-			verboseLog(`requestState: ${requestState}`);
+			debugLog(`requestState: ${requestState}`);
 
 			return {
 				auth,

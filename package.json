@@ -1,6 +1,6 @@
 {
 	"name": "@tkoehlerlg/elysia-clerk",
-	"version": "0.11.2",
+	"version": "0.11.6",
 	"description": "Unofficial Clerk plugin for Elysia.",
 	"author": "Robert Soriano <sorianorobertc@gmail.com>, Torben Koehler <mail@torben.codes>",
 	"license": "MIT",
@@ -35,7 +35,9 @@
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"scripts": {
 		"dev": "bun run --preload ./setup.ts --watch ./dev/index.tsx",
 		"build": "tsdown",

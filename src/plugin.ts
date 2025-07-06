@@ -8,6 +8,7 @@ import type { PendingSessionOptions } from '@clerk/types';
 import { Elysia } from 'elysia';
 import { clerkClient } from './clerkClient';
 import * as constants from './constants';
+import { cloneRequest } from './cloneRequest';
 
 export type StringOrFunction = string | (() => string);
 
@@ -48,7 +49,7 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 			);
 			verboseLog(`secretKey: ${secretKey}, publishableKey: ${publishableKey}`);
 
-			const clonedRequest = { ...request.clone(), headers: request.headers };
+			const clonedRequest = await cloneRequest(request);
 
 			const requestState = await clerkClient.authenticateRequest(
 				clonedRequest,

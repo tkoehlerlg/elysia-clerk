@@ -26,7 +26,7 @@ export interface SignedInAuthObject {
 	/**
 	 * The current session claims containing user data and metadata
 	 */
-	sessionClaims: Record<string, any>;
+	sessionClaims: Record<string, unknown>;
 
 	/**
 	 * The current organization ID (if user is part of an organization)

@@ -6,8 +6,8 @@ import type {
 import type { PendingSessionOptions } from '@clerk/types';
 import { Elysia } from 'elysia';
 import { clerkClient } from './clerkClient';
-import * as constants from './constants';
 import { cloneRequest } from './cloneRequest';
+import * as constants from './constants';
 
 export type StringOrFunction = string | (() => string);
 
@@ -35,7 +35,6 @@ export function clerkPlugin(options?: ElysiaClerkOptions) {
 		name: 'elysia-clerk',
 		seed: options,
 	})
-		.decorate('clerk', clerkClient)
 		.resolve(async ({ request, set }) => {
 			const debugLog = (...message: unknown[]) => {
 				if (options?.debug) console.log('[elysia-clerk]', ...message);
